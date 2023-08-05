@@ -1,0 +1,4 @@
+out
+bin
+*.o
+.vs
