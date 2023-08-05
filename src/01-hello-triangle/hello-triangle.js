@@ -16,6 +16,8 @@ function helloTriangle() {
   //  be placed by the browser once the JavaScript code is done working on it
   //
 
+  // Below type annotation is totally ignored by JavaScript, but it helps IDEs
+  //  figure out that the HTML element below is a canvas, not a div, p, span, etc.
   /** @type {HTMLCanvasElement|null} */
   const canvas = document.getElementById('demo-canvas');
   if (!canvas) {

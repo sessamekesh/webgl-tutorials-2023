@@ -22,9 +22,13 @@
          * WebGL trick: pick an offensive canvas background color to test
          *  opacity/clearing bugs
          */
-        background-color: #ff3355;
+        background-color: #da6052;
+
+        /* Help to illustrate the rasterizer's job: when artificially lowering resolution, show pixelated image */
+        image-rendering: crisp-edges;
       }
 
+      /** CSS to make a nice little error box output for debugging (nice if you can't use devtools, e.g. mobile)  */
       #error-box {
         color: #fd8080;
         font-weight: 500;
@@ -42,6 +46,7 @@
   </head>
   <body>
     <canvas id="demo-canvas" width="800px" height="800px">
+      <!-- This message shows up only if the Canvas element isn't supported -->
       HTML5 canvas not supported in your browser! These demos will not work.
     </canvas>
 
