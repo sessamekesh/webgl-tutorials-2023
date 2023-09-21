@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "target": "es2016",
+    "module": "CommonJS",
+    "strict": true,
+    "outDir": "."
+  },
+  "files": [
+    "motion-and-color.ts",
+  ],
+}

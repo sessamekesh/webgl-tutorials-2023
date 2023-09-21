@@ -1,0 +1,62 @@
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>WebGL 2023 - 02 Motion and Color</title>
+
+    <style>
+      html, head, body {
+        margin: 0;
+        padding: 25px;
+        background-color: #2a2a2a;
+      }
+
+      #demo-canvas {
+        width: 800px;
+        height: 800px;
+
+        /*
+         * WebGL trick: pick an offensive canvas background color to test
+         *  opacity/clearing bugs
+         */
+        background-color: #da6052;
+
+        /* Help to illustrate the rasterizer's job: when artificially lowering resolution, show pixelated image */
+        image-rendering: crisp-edges;
+      }
+
+      /** CSS to make a nice little error box output for debugging (nice if you can't use devtools, e.g. mobile)  */
+      #error-box {
+        color: #fd8080;
+        font-weight: 500;
+        font-size: 18pt;
+        border: 1px solid white;
+        padding: 25px;
+        margin-top: 20px;
+      }
+
+      .error-box-title {
+        color: #eee;
+        border-bottom: 1px solid gray;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="demo-canvas" width="800px" height="800px">
+      <!-- This message shows up only if the Canvas element isn't supported -->
+      HTML5 canvas not supported in your browser! These demos will not work.
+    </canvas>
+
+    <!--
+      Doing a little error output in the HTML is nice when testing on mobile,
+       where you don't have access to console.log.
+    -->
+    <div id="error-box">
+      <span class="error-box-title">Error messages, if any, go in here.</span>
+    </div>
+    <script src="motion-and-color.js"></script>
+  </body>
+</html>
