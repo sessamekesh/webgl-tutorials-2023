@@ -1,0 +1,20 @@
+{
+  "name": "03-3d-basics",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/gl-matrix": "^3.2.0",
+    "ts-loader": "^9.5.0",
+    "typescript": "^5.1.6",
+    "webpack-cli": "^5.1.4"
+  },
+  "scripts": {
+    "build": "webpack",
+    "dev": "webpack --watch"
+  },
+  "dependencies": {
+    "gl-matrix": "^3.4.3",
+    "webpack": "^5.88.2"
+  }
+}

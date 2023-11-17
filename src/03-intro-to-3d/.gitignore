@@ -1,0 +1,2 @@
+# Output from typescript compilation
+dist/*.js
