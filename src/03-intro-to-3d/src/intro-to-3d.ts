@@ -31,19 +31,21 @@ void main() {
 
 class Cube {
   private matWorld = mat4.create();
-  private defaultRotation = quat.create();
+  private rotation = quat.create();
 
   constructor(
     private readonly pos: vec3,
-    private readonly scale: vec3) {}
+    private readonly scale: vec3,
+    private readonly rotAxis: vec3,
+    private readonly rotAngle: number) {}
 
   draw(
-      gl: WebGL2RenderingContext, vao: WebGLVertexArrayObject,
-      matWorldUniform: WebGLUniformLocation, numIndices: number) {
+      gl: WebGL2RenderingContext, matWorldUniform: WebGLUniformLocation,
+      vao: WebGLVertexArrayObject, numIndices: number) {
     mat4.identity(this.matWorld);
-    quat.identity(this.defaultRotation);
+    quat.setAxisAngle(this.rotation, this.rotAxis, this.rotAngle);
     mat4.fromRotationTranslationScale(
-      this.matWorld, this.defaultRotation, this.pos, this.scale);
+      this.matWorld, this.rotation, this.pos, this.scale);
 
     gl.uniformMatrix4fv(matWorldUniform, false, this.matWorld);
     gl.bindVertexArray(vao);
@@ -104,12 +106,13 @@ function introTo3dDemo() {
   const matTableWorld = mat4.create();
   mat4.identity(matTableWorld);
   
+  const UP_VEC = vec3.fromValues(0, 1, 0);
   const cubes: Cube[] = [
-    new Cube(vec3.fromValues(0, 0.4, 0), vec3.fromValues(0.4, 0.4, 0.4)),
-    new Cube(vec3.fromValues(1, 0.05, 1), vec3.fromValues(0.05, 0.05, 0.05)),
-    new Cube(vec3.fromValues(1, 0.1, -1), vec3.fromValues(0.1, 0.1, 0.1)),
-    new Cube(vec3.fromValues(-1, 0.15, 1), vec3.fromValues(0.15, 0.15, 0.15)),
-    new Cube(vec3.fromValues(-1, 0.2, -1), vec3.fromValues(0.2, 0.2, 0.2)),
+    new Cube(vec3.fromValues(0, 0.4, 0), vec3.fromValues(0.4, 0.4, 0.4), UP_VEC, 0),
+    new Cube(vec3.fromValues(1, 0.05, 1), vec3.fromValues(0.05, 0.05, 0.05), UP_VEC, glMatrix.toRadian(30)),
+    new Cube(vec3.fromValues(1, 0.1, -1), vec3.fromValues(0.1, 0.1, 0.1), UP_VEC, glMatrix.toRadian(30)),
+    new Cube(vec3.fromValues(-1, 0.15, 1), vec3.fromValues(0.15, 0.15, 0.15), UP_VEC, glMatrix.toRadian(60)),
+    new Cube(vec3.fromValues(-1, 0.2, -1), vec3.fromValues(0.2, 0.2, 0.2), UP_VEC, glMatrix.toRadian(90)),
   ];
 
   const matView = mat4.create();
@@ -159,7 +162,7 @@ function introTo3dDemo() {
     
     // Draw cubes
     cubes.forEach((cube) => {
-      cube.draw(gl, cubeVao, matWorldUniform, CUBE_INDICES.length);
+      cube.draw(gl, matWorldUniform, cubeVao, CUBE_INDICES.length);
     });
 
     // Draw table

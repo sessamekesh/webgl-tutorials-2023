@@ -45,13 +45,13 @@ export function create3dPosColorInterleavedVao(
 export const TABLE_SURFACE_VERTICES = new Float32Array([
   -10, 0, -10,  0.2, 0.2, 0.2,
   -10, 0, 10,  0.2, 0.2, 0.2,
-  10, 0, -10,  0.2, 0.2, 0.2,
   10, 0, 10,  0.2, 0.2, 0.2,
+  10, 0, -10,  0.2, 0.2, 0.2,
 ]);
 
 export const TABLE_SURFACE_INDICES = new Uint16Array([
   0, 1, 2,
-  3, 2, 1
+  0, 2, 3
 ]);
 
 //
