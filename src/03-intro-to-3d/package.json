@@ -1,0 +1,19 @@
+{
+  "name": "03-intro-to-3d",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.1.6",
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4"
+  },
+  "scripts": {
+    "build": "webpack",
+    "dev": "webpack --watch"
+  },
+  "dependencies": {
+    "gl-matrix": "^3.4.3"
+  }
+}
