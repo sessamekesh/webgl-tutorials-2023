@@ -42,44 +42,44 @@ export function createProgram(
   gl: WebGL2RenderingContext,
   vertexShaderSource: string,
   fragmentShaderSource: string) {
-const vertexShader = gl.createShader(gl.VERTEX_SHADER);
-const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
-const program = gl.createProgram();
+  const vertexShader = gl.createShader(gl.VERTEX_SHADER);
+  const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+  const program = gl.createProgram();
 
-if (!vertexShader || !fragmentShader || !program) {
-  showError(`Failed to allocate GL objects (`
-    + `vs=${!!vertexShader}, `
-    + `fs=${!!fragmentShader}, `
-    + `program=${!!program})`);
-  return null;
-}
+  if (!vertexShader || !fragmentShader || !program) {
+    showError(`Failed to allocate GL objects (`
+      + `vs=${!!vertexShader}, `
+      + `fs=${!!fragmentShader}, `
+      + `program=${!!program})`);
+    return null;
+  }
 
-gl.shaderSource(vertexShader, vertexShaderSource);
-gl.compileShader(vertexShader);
-if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
-  const errorMessage = gl.getShaderInfoLog(vertexShader);
-  showError(`Failed to compile vertex shader: ${errorMessage}`);
-  return null;
-}
+  gl.shaderSource(vertexShader, vertexShaderSource);
+  gl.compileShader(vertexShader);
+  if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
+    const errorMessage = gl.getShaderInfoLog(vertexShader);
+    showError(`Failed to compile vertex shader: ${errorMessage}`);
+    return null;
+  }
 
-gl.shaderSource(fragmentShader, fragmentShaderSource);
-gl.compileShader(fragmentShader);
-if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
-  const errorMessage = gl.getShaderInfoLog(fragmentShader);
-  showError(`Failed to compile fragment shader: ${errorMessage}`);
-  return null;
-}
+  gl.shaderSource(fragmentShader, fragmentShaderSource);
+  gl.compileShader(fragmentShader);
+  if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
+    const errorMessage = gl.getShaderInfoLog(fragmentShader);
+    showError(`Failed to compile fragment shader: ${errorMessage}`);
+    return null;
+  }
 
-gl.attachShader(program, vertexShader);
-gl.attachShader(program, fragmentShader);
-gl.linkProgram(program);
-if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-  const errorMessage = gl.getProgramInfoLog(program);
-  showError(`Failed to link GPU program: ${errorMessage}`);
-  return null;
-}
+  gl.attachShader(program, vertexShader);
+  gl.attachShader(program, fragmentShader);
+  gl.linkProgram(program);
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    const errorMessage = gl.getProgramInfoLog(program);
+    showError(`Failed to link GPU program: ${errorMessage}`);
+    return null;
+  }
 
-return program;
+  return program;
 }
 
 export function getContext(canvas: HTMLCanvasElement) {
