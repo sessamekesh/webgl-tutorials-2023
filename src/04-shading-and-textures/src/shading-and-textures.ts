@@ -1,33 +1,6 @@
-import { CUBE_INDICES, CUBE_VERTICES, TABLE_INDICES, TABLE_VERTICES, create3dPosColorInterleavedVao } from "./geometry";
+import { TABLE_INDICES } from "./geometry";
 import { createProgram, createStaticIndexBuffer, createStaticVertexBuffer, getContext, showError } from "./gl-utils";
 import { glMatrix, mat4, quat, vec3 } from 'gl-matrix';
-
-const vertexShaderSourceCode = `#version 300 es
-precision mediump float;
-
-in vec3 vertexPosition;
-in vec3 vertexColor;
-
-out vec3 fragmentColor;
-
-uniform mat4 matWorld;
-uniform mat4 matViewProj;
-
-void main() {
-  fragmentColor = vertexColor;
-
-  gl_Position = matViewProj * matWorld * vec4(vertexPosition, 1.0);
-}`;
-
-const fragmentShaderSourceCode = `#version 300 es
-precision mediump float;
-
-in vec3 fragmentColor;
-out vec4 outputColor;
-
-void main() {
-  outputColor = vec4(fragmentColor, 1.0);
-}`;
 
 class Shape {
   private matWorld = mat4.create();
@@ -39,10 +12,9 @@ class Shape {
     private scale: number,
     private rotationAxis: vec3,
     private rotationAngle: number,
-    public readonly vao: WebGLVertexArrayObject,
     public readonly numIndices: number) { }
 
-  draw(gl: WebGL2RenderingContext, matWorldUniform: WebGLUniformLocation) {
+  draw(gl: WebGL2RenderingContext, vao: WebGLVertexArrayObject, matWorldUniform: WebGLUniformLocation) {
     quat.setAxisAngle(this.rotation, this.rotationAxis, this.rotationAngle);
     vec3.set(this.scaleVec, this.scale, this.scale, this.scale);
 
@@ -68,8 +40,6 @@ function introTo3DDemo() {
 
   const gl = getContext(canvas);
 
-  const cubeVertices = createStaticVertexBuffer(gl, CUBE_VERTICES);
-  const cubeIndices = createStaticIndexBuffer(gl, CUBE_INDICES);
   const tableVertices = createStaticVertexBuffer(gl, TABLE_VERTICES);
   const tableIndices = createStaticIndexBuffer(gl, TABLE_INDICES);
 
