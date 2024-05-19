@@ -1,3 +1,4 @@
+import { vec3 } from 'gl-matrix';
 import { createProgram, createStaticVertexBuffer, showError } from './gl-utils';
 
 const vsSource = `#version 300 es
@@ -7,16 +8,12 @@ in vec3 vertexPosition;
 in vec3 vertexNormal;
 
 out vec3 fragmentPosition;
-out vec3 fragmentColor;
 out vec3 fragmentNormal;
 
-uniform vec3 objectColor;
 uniform mat4 matWorld;
 uniform mat4 matViewProj;
 
 void main() {
-  fragmentColor = objectColor;
-
   fragmentNormal = (matViewProj * matWorld * vec4(vertexNormal, 0.0)).xyz;
   fragmentPosition = matWorld * vec4(vertexPosition, 1.0).xyz;
   gl_Position = matViewProj * vec4(fragmentPos, 1.0);
@@ -26,9 +23,9 @@ const fsSource = `#version 300 es
 precision mediump float;
 
 in vec3 fragmentPosition;
-in vec3 fragmentColor;
 in vec3 fragmentNormal;
 
+uniform vec3 objectColor;
 uniform vec3 lightPosition;
 uniform vec3 cameraPosition;
 uniform float ambientCoefficient;
@@ -38,11 +35,11 @@ out vec4 outputColor;
 
 void main() {
   vec3 normal = normalize(fragmentNormal);
-  vec3 ambientColor = ambientCoefficient * fragmentColor;
+  vec3 ambientColor = ambientCoefficient * objectColor;
 
   vec3 lightDirection = normalize(lightPosition - fragmentPosition);
   float diffuseCoefficient = max(dot(lightDirection, normal), 0.0);
-  vec3 diffuseColor = diffuseCoefficient * fragmentColor;
+  vec3 diffuseColor = diffuseCoefficient * objectColor;
 
   vec3 viewDirection = normalize(cameraPosition - fragmentPosition);
   vec3 reflectDirection = reflect(-lightDirection, normal);
@@ -53,7 +50,7 @@ void main() {
   outputColor = ambientColor + diffuseColor + specularColor;
 }`;
 
-export interface BlinnPhongProgram {
+export interface SolidBlinnPhongProgram {
   program: WebGLProgram;
   vertexPosition: number;
   vertexNormal: number;
@@ -67,7 +64,7 @@ export interface BlinnPhongProgram {
 }
 
 export function createSolidBlinnPhongProgram(
-    gl: WebGL2RenderingContext): BlinnPhongProgram | null {
+    gl: WebGL2RenderingContext): SolidBlinnPhongProgram | null {
   const program = createProgram(gl, vsSource, fsSource);
 
   if (!program) return null;
@@ -112,4 +109,42 @@ specularPower=${specularPower}`);
     vertexNormal,
     vertexPosition
   };
+}
+
+export function createBlinnPhongVao(
+  gl: WebGL2RenderingContext,
+  vertexBuffer: WebGLBuffer, normalBuffer: WebGLBuffer,
+  indexBuffer: WebGLBuffer, blinnPhong: SolidBlinnPhongProgram
+) {
+  const vao = gl.createVertexArray();
+  if (!vao) {
+    showError('Failed to create VAO');
+    return null;
+  }
+
+  gl.bindVertexArray(vao);
+
+  gl.enableVertexAttribArray(blinnPhong.vertexPosition);
+  gl.enableVertexAttribArray(blinnPhong.vertexNormal);
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+  gl.vertexAttribPointer(blinnPhong.vertexPosition, 3, gl.FLOAT, false, 0, 0);
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+  gl.vertexAttribPointer(blinnPhong.vertexNormal, 3, gl.FLOAT, false, 0, 0);
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+  gl.bindVertexArray(null);
+
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);  // Not sure if necessary, but not a bad idea.
+
+  return vao;
+}
+
+export interface BlinnPhongMaterial {
+  color: vec3;
+  ambientCoefficient: number;
+  specularPower: number;
 }

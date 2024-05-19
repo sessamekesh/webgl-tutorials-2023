@@ -1,5 +1,6 @@
 // Vertex buffer format: XYZ RGB (interleaved)
 
+import { mat4, quat, vec3 } from "gl-matrix";
 import { showError } from "./gl-utils";
 
 export const TABLE_POSITIONS = new Float32Array([
@@ -120,38 +121,21 @@ export function createSolidColorVao(
   return vao;
 }
 
-export function createTexturedVao(
-  gl: WebGL2RenderingContext,
-  vertexBuffer: WebGLBuffer, normalBuffer: WebGLBuffer,
-  uvBuffer: WebGLBuffer, indexBuffer: WebGLBuffer,
-  posAttrib: number, normalAttrib: number, uvAttrib: number
-) {
-  const vao = gl.createVertexArray();
-  if (!vao) {
-    showError('Failed to create VAO');
-    return null;
+export class WorldTransform {
+  private _matWorld = mat4.create();
+  private _quat = quat.create();
+  private _scl = vec3.create();
+
+  constructor(
+    public pos: vec3 = vec3.fromValues(0, 0, 0),
+    public rotationAxis: vec3 = vec3.fromValues(0, 1, 0),
+    public rotationAngle: number = 0,
+    public scale: number = 1) {}
+
+  matWorld() {
+    quat.setAxisAngle(this._quat, this.rotationAxis, this.rotationAngle);
+    vec3.set(this._scl, this.scale, this.scale, this.scale);
+    mat4.fromRotationTranslationScale(this._matWorld, this._quat, this.pos, this._scl);
+    return this._matWorld;
   }
-
-  gl.bindVertexArray(vao);
-
-  gl.enableVertexAttribArray(posAttrib);
-  gl.enableVertexAttribArray(normalAttrib);
-  gl.enableVertexAttribArray(uvAttrib);
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-  gl.vertexAttribPointer(posAttrib, 3, gl.FLOAT, false, 0, 0);
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-  gl.vertexAttribPointer(normalAttrib, 3, gl.FLOAT, false, 0, 0);
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, uvBuffer);
-  gl.vertexAttribPointer(normalAttrib, 2, gl.FLOAT, false, 0, 0);
-  gl.bindBuffer(gl.ARRAY_BUFFER, null);
-
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-  gl.bindVertexArray(null);
-
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);  // Not sure if necessary, but not a bad idea.
-
-  return vao;
 }
