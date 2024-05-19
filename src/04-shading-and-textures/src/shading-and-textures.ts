@@ -1,34 +1,34 @@
 import { TABLE_INDICES } from "./geometry";
 import { createProgram, createStaticIndexBuffer, createStaticVertexBuffer, getContext, showError } from "./gl-utils";
 import { glMatrix, mat4, quat, vec3 } from 'gl-matrix';
+import { BlinnPhongProgram } from "./solidBlinnPhong";
 
-class Shape {
-  private matWorld = mat4.create();
-  private scaleVec = vec3.create();
-  private rotation = quat.create();
+class WorldTransform {
+  private _matWorld = mat4.create();
+  private _quat = quat.create();
+  private _scl = vec3.create();
 
   constructor(
-    private pos: vec3,
-    private scale: number,
-    private rotationAxis: vec3,
-    private rotationAngle: number,
-    public readonly numIndices: number) { }
+    public pos: vec3 = vec3.fromValues(0, 0, 0),
+    public rotationAxis: vec3 = vec3.fromValues(0, 1, 0),
+    public rotationAngle: number = 0,
+    public scale: number = 1) {}
 
-  draw(gl: WebGL2RenderingContext, vao: WebGLVertexArrayObject, matWorldUniform: WebGLUniformLocation) {
-    quat.setAxisAngle(this.rotation, this.rotationAxis, this.rotationAngle);
-    vec3.set(this.scaleVec, this.scale, this.scale, this.scale);
-
-    mat4.fromRotationTranslationScale(
-      this.matWorld,
-      /* rotation= */ this.rotation,
-      /* position= */ this.pos,
-      /* scale= */ this.scaleVec);
-
-    gl.uniformMatrix4fv(matWorldUniform, false, this.matWorld);
-    gl.bindVertexArray(this.vao);
-    gl.drawElements(gl.TRIANGLES, this.numIndices, gl.UNSIGNED_SHORT, 0);
-    gl.bindVertexArray(null);
+  matWorld() {
+    quat.setAxisAngle(this._quat, this.rotationAxis, this.rotationAngle);
+    vec3.set(this._scl, this.scale, this.scale, this.scale);
+    mat4.fromRotationTranslationScale(this._matWorld, this._quat, this.pos, this._scl);
+    return this._matWorld;
   }
+}
+
+class SolidColorObject {
+  constructor(
+    private readonly transform: WorldTransform,
+    private readonly vao: WebGLVertexArrayObject,
+    private readonly color: vec3) {}
+
+  draw(gl: WebGL2RenderingContext, shader: BlinnPhongProgram) {}
 }
 
 function introTo3DDemo() {

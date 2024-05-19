@@ -53,7 +53,7 @@ void main() {
   outputColor = ambientColor + diffuseColor + specularColor;
 }`;
 
-interface BlinnPhongProgram {
+export interface BlinnPhongProgram {
   program: WebGLProgram;
   vertexPosition: number;
   vertexNormal: number;
